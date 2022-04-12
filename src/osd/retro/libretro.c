@@ -170,7 +170,7 @@ void retro_set_environment(retro_environment_t cb)
 #endif
     /* common for MAME/MESS/UME */
     { option_auto_save, "Auto save/load states; disabled|enabled" },
-    { option_mouse, "Enable in-game mouse; disabled|enabled" },
+    { option_mouse, "XY device; none|mouse|lightgun" },
     { option_throttle, "Enable throttle; disabled|enabled" },
     { option_cheats, "Enable cheats; disabled|enabled" },
 //  { option_nobuffer, "Nobuffer patch; disabled|enabled" },
@@ -225,10 +225,12 @@ static void check_variables(void)
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      if (!strcmp(var.value, "disabled"))
-         mouse_enable = false;
-      if (!strcmp(var.value, "enabled"))
-         mouse_enable = true;
+      if (!strcmp(var.value, "none"))
+         mouse_enable = 0;
+      if (!strcmp(var.value, "mouse"))
+         mouse_enable = 1;
+      if (!strcmp(var.value, "lightgun"))
+         mouse_enable = 2;
    }
 
    var.key   = option_throttle;
@@ -580,6 +582,7 @@ void retro_run (void)
    input_poll_cb();
 
    process_mouse_state();
+   process_lightgun_state();
    process_keyboard_state();
    process_joypad_state();
 
