@@ -44,9 +44,11 @@ extern bool throttle_enable;
 extern bool auto_save_enable;
 extern bool game_specific_saves_enable;
 
-extern int mouseLX;
-extern int mouseLY;
-extern int mouseBUT[4];
+extern int mouseLX[8];
+extern int mouseLY[8];
+extern int gunLX[4];
+extern int gunLY[4];
+//extern int mouseBUT[4];
 
 extern UINT16 retrokbd_state[RETROK_LAST];
 
@@ -88,6 +90,8 @@ void process_keyboard_state(void);
 void process_joypad_state(void);
 
 void process_mouse_state(void);
+
+void process_lightgun_state(void);
 
 #ifdef __cplusplus
 extern "C" {
