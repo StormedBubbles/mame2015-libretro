@@ -44,17 +44,20 @@ typedef struct joystate_t
 render_target *our_target = NULL;
 
 /* input device */
-static input_device *retrokbd_device; // KEYBD
-static input_device *mouse_device;    // MOUSE
-static input_device *joy_device[4];// JOY0/JOY1/JOY2/JOY3
-static input_device *Pad_device[4];// PAD0/PAD1/PAD2/PAD3
+static input_device *retrokbd_device;    // KEYBD
+static input_device *mouse_device[8];    // MOUSE0/MOUSE1/.../MOUSE7
+static input_device *lightgun_device[4]; // GUN0/GUN1/GUN2/GUN3
+static input_device *joy_device[8];      // JOY0/JOY1/.../JOY7
+static input_device *Pad_device[8];      // PAD0/PAD1/.../PAD7
 
 /* state */
 UINT16 retrokbd_state[RETROK_LAST];
-int mouseLX;
-int mouseLY;
+int mouseLX[8];
+int mouseLY[8];
 int mouseBUT[4];
-static Joystate joystate[4];
+int gunLX[4];
+int gunLY[4];
+static Joystate joystate[8];
 
 int ui_ipt_pushchar=-1;
 
@@ -66,7 +69,7 @@ bool hide_warnings = false;
 bool nobuffer_enable = false;
 
 bool hide_gameinfo = false;
-bool mouse_enable = false;
+int mouse_enable = 0;
 bool cheats_enable = false;
 bool alternate_renderer = false;
 bool boot_to_osd_enable = false;
@@ -833,10 +836,11 @@ static INT32 generic_button_get_state(void *device_internal, void *item_internal
 	return *itemdata >> 7;
 }
 
-#define input_device_item_add_joy(a,b,c,d,e)   joy_device[a]->add_item(b,d,e,c)
-#define input_device_item_add_mouse(a,b,c,d,e) mouse_device->add_item(b,d,e,c)
-#define input_device_item_add_kbd(a,b,c,d,e)   retrokbd_device->add_item(b,d,e,c)
-#define input_device_item_add_pad(a,b,c,d,e)   Pad_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_joy(a,b,c,d,e)      joy_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_kbd(a,b,c,d,e)      retrokbd_device->add_item(b,d,e,c)
+#define input_device_item_add_pad(a,b,c,d,e)      Pad_device[a]->add_item(b,d,e,c)
 
 void process_keyboard_state(void)
 {
@@ -863,103 +867,105 @@ void process_joypad_state(void)
 {
    unsigned i, j;
 
-   for(j = 0;j < 4; j++)
+   for(j = 0;j < 8; j++)
    {
       for(i = 0;i < MAX_BUTTONS; i++)
          joystate[j].button[i] = input_state_cb(j, RETRO_DEVICE_JOYPAD, 0,i)?0x80:0;
 
-      joystate[j].a2[0] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN,  0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X));
-      joystate[j].a2[1] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN,  0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y));
+         joystate[j].a2[0] = 2 * (input_state_cb(j, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X));
+         joystate[j].a2[1] = 2 * (input_state_cb(j, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y));
 
-	joystate[j].a1[0] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_X));
-      joystate[j].a1[1] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y));
-	   
-	   //joystate[j].a2[0] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_X));
-      //joystate[j].a2[1] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN, RETRO_DEVICE_INDEX_ANALOG_RIGHT, RETRO_DEVICE_ID_ANALOG_Y));
-
-           if (input_state_cb(j, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN))
-	   {
-	//      //top left
-	      joystate[j].a2[0] = -65534;
-	      joystate[j].a2[1] = -65534;
-      }
-
-      //debug
-      //if (joystate[j].a1[0] == 0 && joystate[j].a1[1] == 0)
-      //{
-	 //     joystate[j].a1[0] = 20000;
-	   //   joystate[j].a1[1] = 20000;
-      //}
-
-
+         joystate[j].a1[0] = 2 * (input_state_cb(j, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_X));
+         joystate[j].a1[1] = 2 * (input_state_cb(j, RETRO_DEVICE_ANALOG, RETRO_DEVICE_INDEX_ANALOG_LEFT, RETRO_DEVICE_ID_ANALOG_Y));
    }
 }
 
 void process_mouse_state(void)
 {
-   static int mbL = 0, mbR = 0, mbM = 0;
-   int mouse_l;
-   int mouse_r;
-   int mouse_m;
-   int16_t mouse_x;
-   int16_t mouse_y;
-
-   if (!mouse_enable)
-      return;
-
-   mouse_x = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
-   mouse_y = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
-   mouse_l = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
-   mouse_r = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
-   mouse_m = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE);
-   
-   //joystate[j].a1[0] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN,  0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X));
-     // joystate[j].a1[1] = 2 * (input_state_cb(j, RETRO_DEVICE_LIGHTGUN,  0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y));
-
-   //mouseLX = input_state_cb(0, RETRO_DEVICE_LIGHTGUN,  0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
-   //mouseLY = input_state_cb(0, RETRO_DEVICE_LIGHTGUN,  0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
-
-	//if (input_state_cb(0, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN))
-      //{
-	      //top left
-	      //joystate[j].a1[0] = -65534;
-	      //joystate[j].a1[1] = -65534;
-//}
-
-   mouseLX = mouse_x*INPUT_RELATIVE_PER_PIXEL;;
-   mouseLY = mouse_y*INPUT_RELATIVE_PER_PIXEL;;
-
-   if(mbL==0 && mouse_l)
-   {
-      mbL=1;
-      mouseBUT[0]=0x80;
-   }
-   else if(mbL==1 && !mouse_l)
-   {
-      mouseBUT[0]=0;
-      mbL=0;
-   }
-
-   if(mbR==0 && mouse_r)
-   {
-      mbR=1;
-      mouseBUT[1]=0x80;
-   }
-   else if(mbR==1 && !mouse_r)
-   {
-      mouseBUT[1]=0;
-      mbR=0;
-   }
+   unsigned i;
 	
-   if(mbM==0 && mouse_m)
+   //static int mbL = 0, mbR = 0, mbM = 0;
+   //int mouse_l;
+   //int mouse_r;
+   //int mouse_m;
+   int16_t mouse_x[8];
+   int16_t mouse_y[8];
+
+   if (mouse_enable == 1)
+      return;
+	
+   for(i = 0;i < 8; i++)
    {
-      mbM=1;
-      mouseBUT[2]=0x80;
+   	mouse_x[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
+   	mouse_y[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
+   	//mouse_l[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
+   	//mouse_r[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
+   	//mouse_m[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE);
+
+   	mouseLX[i] = mouse_x[i]*INPUT_RELATIVE_PER_PIXEL;;
+   	mouseLY[i] = mouse_y[i]*INPUT_RELATIVE_PER_PIXEL;;
+	
+	//Is it necessary to explicitly map the mouse buttons?
+	//They can be mapped for each player in the Libretro menu.
+   	//if(mbL==0 && mouse_l)
+   	//{
+      	//  mbL=1;
+      	//  mouseBUT[0]=0x80;
+   	//}
+   	//else if(mbL==1 && !mouse_l)
+   	//{
+        //  mouseBUT[0]=0;
+        //  mbL=0;
+   	//}
+	//
+   	//if(mbR==0 && mouse_r)
+   	//{
+        //  mbR=1;
+      	//  mouseBUT[1]=0x80;
+   	//}
+   	//else if(mbR==1 && !mouse_r)
+   	//{
+        //  mouseBUT[1]=0;
+        //  mbR=0;
+   	//}
+	//
+   	//if(mbM==0 && mouse_m)
+   	//{
+        //  mbM=1;
+        //  mouseBUT[2]=0x80;
+   	//}
+   	//else if(mbM==1 && !mouse_m)
+   	//{
+        //  mouseBUT[2]=0;
+        //  mbM=0;
+   	//}
    }
-   else if(mbM==1 && !mouse_m)
+}
+
+void process_lightgun_state(void)
+{
+   unsigned i;
+	
+   int16_t gun_x[4];
+   int16_t gun_y[4];
+
+   if (mouse_enable == 2)
+      return;
+	
+   for(i = 0;i < 4; i++)
    {
-      mouseBUT[2]=0;
-      mbM=0;
+   	gun_x[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
+   	gun_y[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
+
+   	gunLX[i] = gun_x[i]*2;;
+   	gunLY[i] = gun_y[i]*2;;
+	   
+        if (input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN))
+	{
+	//      //top left
+	      gunLX[i] = -65534;
+	      gunLY[i] = -65534;
+        }
    }
 }
 
@@ -968,19 +974,40 @@ static void initInput(running_machine &machine)
    int i,j,button;
    char defname[20];
 
-   if (mouse_enable)
+   if (mouse_enable == 1)
    {
-      //MOUSE
-      mouse_device = machine.input().device_class(DEVICE_CLASS_MOUSE).add_device("Mice1");
-      // add the axes
-      input_device_item_add_mouse(mouse_device , "X", &mouseLX, ITEM_ID_XAXIS, generic_axis_get_state);
-      input_device_item_add_mouse(mouse_device , "Y", &mouseLY, ITEM_ID_YAXIS, generic_axis_get_state);
-      // add the buttons
-      for (button = 0; button < 4; button++)
+      unsigned k;
+	   
+      for(k = 0;k < 8; k++)
       {
-         input_item_id itemid = (input_item_id) (ITEM_ID_BUTTON1+button);
-         sprintf(defname, "B%d", button + 1);
-         input_device_item_add_mouse(mouse_device, defname, &mouseBUT[button], itemid, generic_button_get_state);
+      	//MOUSE
+	sprintf(defname, "Mouse%d", k);
+      	mouse_device[k] = machine.input().device_class(DEVICE_CLASS_MOUSE).add_device(defname);
+      	// add the axes
+      	input_device_item_add_mouse(mouse_device[k] , "X", &mouseLX[k], ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_mouse(mouse_device[k] , "Y", &mouseLY[k], ITEM_ID_YAXIS, generic_axis_get_state);
+      	// add the buttons
+	// See above. Is this necessary to include due to Libretro handling inputs on its own?
+      	//for (button = 0; button < 4; button++)
+      	//{
+        //   input_item_id itemid = (input_item_id) (ITEM_ID_BUTTON1+button);
+        //   sprintf(defname, "B%d", button + 1);
+        //   input_device_item_add_mouse(mouse_device[k], defname, &mouseBUT[button], itemid, generic_button_get_state);
+      	//}
+      }
+	   
+   if (mouse_enable == 2)
+   {
+      unsigned k;
+	   
+      for(k = 0;k < 4; k++)
+      {
+      	//LIGHTGUN
+	sprintf(defname, "Gun%d", k);
+      	lightgun_device[k] = machine.input().device_class(DEVICE_CLASS_LIGHTGUN).add_device(defname);
+      	// add the axes
+      	input_device_item_add_lightgun(lightgun_device[k] , "X", &gunLX[k], ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_lightgun(lightgun_device[k] , "Y", &gunLY[k], ITEM_ID_YAXIS, generic_axis_get_state);
       }
    }
 
@@ -1007,7 +1034,7 @@ static void initInput(running_machine &machine)
 
    Input_Binding(machine);
 
-   for(i=0;i<4;i++)
+   for(i=0;i<8;i++)
    {
       sprintf(defname, "Joy%d", i);
       joy_device[i]=machine.input().device_class(DEVICE_CLASS_JOYSTICK).add_device(defname);
@@ -1731,10 +1758,24 @@ static void Set_Default_Option(void)
    else
       Add_Option("-nocheat");
 
-   if(mouse_enable)
+   if(mouse_enable == 1)
+   {
       Add_Option("-mouse");
-   else
+      Add_Option("-multimouse");
+      Add_Option("-nolightgun");
+   }
+   else if(mouse_enable == 2)
+   {
       Add_Option("-nomouse");
+      Add_Option("-multimouse");
+      Add_Option("-lightgun");
+   }
+   else
+   {
+      Add_Option("-nomouse");
+      Add_Option("-nomultimouse");
+      Add_Option("-nolightgun");	   
+   }
 
    if(hide_gameinfo)
       Add_Option("-skip_gameinfo");
