@@ -960,7 +960,7 @@ void process_lightgun_state(void)
    	gunLX[i] = gun_x[i]*2;;
    	gunLY[i] = gun_y[i]*2;;
 	   
-        if (input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN))
+        if (input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN) || input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD))
 	{
 	//      //top left
 	      gunLX[i] = -65534;
