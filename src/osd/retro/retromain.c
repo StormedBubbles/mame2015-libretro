@@ -837,8 +837,8 @@ static INT32 generic_button_get_state(void *device_internal, void *item_internal
 }
 
 #define input_device_item_add_joy(a,b,c,d,e)      joy_device[a]->add_item(b,d,e,c)
-#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device->add_item(b,d,e,c)
-#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device->add_item(b,d,e,c)
+#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device[a]->add_item(b,d,e,c)
 #define input_device_item_add_kbd(a,b,c,d,e)      retrokbd_device->add_item(b,d,e,c)
 #define input_device_item_add_pad(a,b,c,d,e)      Pad_device[a]->add_item(b,d,e,c)
 
