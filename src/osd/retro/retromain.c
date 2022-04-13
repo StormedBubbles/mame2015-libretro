@@ -995,6 +995,7 @@ static void initInput(running_machine &machine)
         //   input_device_item_add_mouse(mouse_device[k], defname, &mouseBUT[button], itemid, generic_button_get_state);
       	//}
       }
+   }
 	   
    if (mouse_enable == 2)
    {
