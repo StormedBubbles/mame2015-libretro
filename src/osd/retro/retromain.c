@@ -901,9 +901,8 @@ void process_mouse_state(void)
    	mouse_l = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
    	mouse_r = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
    	mouse_m = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE);
-
-   	mouseLX = mouse_x*INPUT_RELATIVE_PER_PIXEL;;
-   	mouseLY = mouse_y*INPUT_RELATIVE_PER_PIXEL;;
+   	mouseLX = mouse_x*INPUT_RELATIVE_PER_PIXEL;
+   	mouseLY = mouse_y*INPUT_RELATIVE_PER_PIXEL;
 	
    	if(mbL==0 && mouse_l)
    	{
@@ -984,12 +983,12 @@ static void initInput(running_machine &machine)
       	input_device_item_add_mouse(mouse_device , "Y", &mouseLY, ITEM_ID_YAXIS, generic_axis_get_state);
       	// add the buttons
 	// See above. Is this necessary to include due to Libretro handling inputs on its own?
-      	//for (button = 0; button < 4; button++)
-      	//{
-        //   input_item_id itemid = (input_item_id) (ITEM_ID_BUTTON1+button);
-        //   sprintf(defname, "B%d", button + 1);
-        //   input_device_item_add_mouse(mouse_device, defname, &mouseBUT[button], itemid, generic_button_get_state);
-      	//}
+      	for (button = 0; button < 4; button++)
+      	{
+           input_item_id itemid = (input_item_id) (ITEM_ID_BUTTON1+button);
+           sprintf(defname, "B%d", button + 1);
+           input_device_item_add_mouse(mouse_device, defname, &mouseBUT[button], itemid, generic_button_get_state);
+      	}
       //}
    }
 	   
