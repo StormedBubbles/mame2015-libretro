@@ -891,7 +891,7 @@ void process_mouse_state(void)
    int16_t mouse_x[8];
    int16_t mouse_y[8];
 
-   if (mouse_enable == 1)
+   if (mouse_enable == 0 || mouse_enable == 2)
       return;
 	
    for(i = 0;i < 8; i++)
@@ -949,7 +949,7 @@ void process_lightgun_state(void)
    int16_t gun_x[4];
    int16_t gun_y[4];
 
-   if (mouse_enable == 2)
+   if (mouse_enable == 0 || mouse_enable == 1)
       return;
 	
    for(i = 0;i < 4; i++)
@@ -1755,24 +1755,21 @@ static void Set_Default_Option(void)
    else
       Add_Option("-nocheat");
 
-   //if(mouse_enable == 1)
-   //{
-   //   Add_Option("-mouse");
-   //   Add_Option("-multimouse");
-   //   Add_Option("-nolightgun");
-   //}
-   //else if(mouse_enable == 2)
-   //{
-   //   Add_Option("-nomouse");
-   //   Add_Option("-multimouse");
-   //   Add_Option("-lightgun");
-   //}
-   //else
-   //{
-   //   Add_Option("-nomouse");
-   //   Add_Option("-nomultimouse");
-   //   Add_Option("-nolightgun");	   
-   //}
+   if(mouse_enable == 1)
+   {
+      Add_Option("-mouse");
+      Add_Option("-nolightgun");
+   }
+   else if(mouse_enable == 2)
+   {
+      Add_Option("-nomouse");
+      Add_Option("-lightgun");
+   }
+   else
+   {
+      Add_Option("-nomouse");
+      Add_Option("-nolightgun");	   
+   }
 
    if(hide_gameinfo)
       Add_Option("-skip_gameinfo");
