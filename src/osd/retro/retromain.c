@@ -837,8 +837,8 @@ static INT32 generic_button_get_state(void *device_internal, void *item_internal
 }
 
 #define input_device_item_add_joy(a,b,c,d,e)      joy_device[a]->add_item(b,d,e,c)
-#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device[a]->add_item(b,d,e,c)
-#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device->add_item(b,d,e,c)
+#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device->add_item(b,d,e,c)
 #define input_device_item_add_kbd(a,b,c,d,e)      retrokbd_device->add_item(b,d,e,c)
 #define input_device_item_add_pad(a,b,c,d,e)      Pad_device[a]->add_item(b,d,e,c)
 
@@ -976,39 +976,35 @@ static void initInput(running_machine &machine)
 
    if (mouse_enable == 1)
    {
-      unsigned k;
-	   
-      for(k = 0;k < 8; k++)
+      for(i = 0;i < 8; i++)
       {
       	//MOUSE
-	sprintf(defname, "Mouse%d", k);
-      	mouse_device[k] = machine.input().device_class(DEVICE_CLASS_MOUSE).add_device(defname);
+	sprintf(defname, "Mouse%d", i);
+      	mouse_device[i] = machine.input().device_class(DEVICE_CLASS_MOUSE).add_device(defname);
       	// add the axes
-      	input_device_item_add_mouse(mouse_device[k] , "X", &mouseLX[k], ITEM_ID_XAXIS, generic_axis_get_state);
-      	input_device_item_add_mouse(mouse_device[k] , "Y", &mouseLY[k], ITEM_ID_YAXIS, generic_axis_get_state);
+      	input_device_item_add_mouse(mouse_device[i] , "X", &mouseLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_mouse(mouse_device[i] , "Y", &mouseLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
       	// add the buttons
 	// See above. Is this necessary to include due to Libretro handling inputs on its own?
       	//for (button = 0; button < 4; button++)
       	//{
         //   input_item_id itemid = (input_item_id) (ITEM_ID_BUTTON1+button);
         //   sprintf(defname, "B%d", button + 1);
-        //   input_device_item_add_mouse(mouse_device[k], defname, &mouseBUT[button], itemid, generic_button_get_state);
+        //   input_device_item_add_mouse(mouse_device, defname, &mouseBUT[button], itemid, generic_button_get_state);
       	//}
       }
    }
 	   
    if (mouse_enable == 2)
    {
-      unsigned k;
-	   
-      for(k = 0;k < 4; k++)
+      for(i = 0;i < 4; i++)
       {
       	//LIGHTGUN
-	sprintf(defname, "Gun%d", k);
-      	lightgun_device[k] = machine.input().device_class(DEVICE_CLASS_LIGHTGUN).add_device(defname);
+	sprintf(defname, "Gun%d", i);
+      	lightgun_device[i] = machine.input().device_class(DEVICE_CLASS_LIGHTGUN).add_device(defname);
       	// add the axes
-      	input_device_item_add_lightgun(lightgun_device[k] , "X", &gunLX[k], ITEM_ID_XAXIS, generic_axis_get_state);
-      	input_device_item_add_lightgun(lightgun_device[k] , "Y", &gunLY[k], ITEM_ID_YAXIS, generic_axis_get_state);
+      	input_device_item_add_lightgun(lightgun_device[i] , "X", &gunLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_lightgun(lightgun_device[i] , "Y", &gunLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
       }
    }
 
