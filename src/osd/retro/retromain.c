@@ -1755,24 +1755,24 @@ static void Set_Default_Option(void)
    else
       Add_Option("-nocheat");
 
-   if(mouse_enable == 1)
-   {
-      Add_Option("-mouse");
-      Add_Option("-multimouse");
-      Add_Option("-nolightgun");
-   }
-   else if(mouse_enable == 2)
-   {
-      Add_Option("-nomouse");
-      Add_Option("-multimouse");
-      Add_Option("-lightgun");
-   }
-   else
-   {
-      Add_Option("-nomouse");
-      Add_Option("-nomultimouse");
-      Add_Option("-nolightgun");	   
-   }
+   //if(mouse_enable == 1)
+   //{
+   //   Add_Option("-mouse");
+   //   Add_Option("-multimouse");
+   //   Add_Option("-nolightgun");
+   //}
+   //else if(mouse_enable == 2)
+   //{
+   //   Add_Option("-nomouse");
+   //   Add_Option("-multimouse");
+   //   Add_Option("-lightgun");
+   //}
+   //else
+   //{
+   //   Add_Option("-nomouse");
+   //   Add_Option("-nomultimouse");
+   //   Add_Option("-nolightgun");	   
+   //}
 
    if(hide_gameinfo)
       Add_Option("-skip_gameinfo");
