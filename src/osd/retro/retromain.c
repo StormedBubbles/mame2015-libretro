@@ -837,8 +837,8 @@ static INT32 generic_button_get_state(void *device_internal, void *item_internal
 }
 
 #define input_device_item_add_joy(a,b,c,d,e)      joy_device[a]->add_item(b,d,e,c)
-#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device->add_item(b,d,e,c)
-#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device->add_item(b,d,e,c)
+#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device[a]->add_item(b,d,e,c)
 #define input_device_item_add_kbd(a,b,c,d,e)      retrokbd_device->add_item(b,d,e,c)
 #define input_device_item_add_pad(a,b,c,d,e)      Pad_device[a]->add_item(b,d,e,c)
 
@@ -982,8 +982,8 @@ static void initInput(running_machine &machine)
 	sprintf(defname, "Mouse%d", i);
       	mouse_device[i] = machine.input().device_class(DEVICE_CLASS_MOUSE).add_device(defname);
       	// add the axes
-      	input_device_item_add_mouse(mouse_device[i] , "X", &mouseLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
-      	input_device_item_add_mouse(mouse_device[i] , "Y", &mouseLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
+      	input_device_item_add_mouse(i , "X", &mouseLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_mouse(i , "Y", &mouseLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
       	// add the buttons
 	// See above. Is this necessary to include due to Libretro handling inputs on its own?
       	//for (button = 0; button < 4; button++)
@@ -1003,8 +1003,8 @@ static void initInput(running_machine &machine)
 	sprintf(defname, "Gun%d", i);
       	lightgun_device[i] = machine.input().device_class(DEVICE_CLASS_LIGHTGUN).add_device(defname);
       	// add the axes
-      	input_device_item_add_lightgun(lightgun_device[i] , "X", &gunLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
-      	input_device_item_add_lightgun(lightgun_device[i] , "Y", &gunLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
+      	input_device_item_add_lightgun(i , "X", &gunLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_lightgun(i , "Y", &gunLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
       }
    }
 
