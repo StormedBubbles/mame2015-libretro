@@ -52,11 +52,11 @@ static input_device *Pad_device[8];      // PAD0/PAD1/.../PAD7
 
 /* state */
 UINT16 retrokbd_state[RETROK_LAST];
-int mouseLX[8];
-int mouseLY[8];
+int mouseLX;
+int mouseLY;
 int mouseBUT[4];
-int gunLX[4];
-int gunLY[4];
+int gunLX;
+int gunLY;
 static Joystate joystate[8];
 
 int ui_ipt_pushchar=-1;
@@ -837,8 +837,8 @@ static INT32 generic_button_get_state(void *device_internal, void *item_internal
 }
 
 #define input_device_item_add_joy(a,b,c,d,e)      joy_device[a]->add_item(b,d,e,c)
-#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device[a]->add_item(b,d,e,c)
-#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device[a]->add_item(b,d,e,c)
+#define input_device_item_add_mouse(a,b,c,d,e)    mouse_device->add_item(b,d,e,c)
+#define input_device_item_add_lightgun(a,b,c,d,e) lightgun_device->add_item(b,d,e,c)
 #define input_device_item_add_kbd(a,b,c,d,e)      retrokbd_device->add_item(b,d,e,c)
 #define input_device_item_add_pad(a,b,c,d,e)      Pad_device[a]->add_item(b,d,e,c)
 
@@ -882,91 +882,89 @@ void process_joypad_state(void)
 
 void process_mouse_state(void)
 {
-   unsigned i;
+   //unsigned i;
 	
-   //static int mbL = 0, mbR = 0, mbM = 0;
-   //int mouse_l;
-   //int mouse_r;
-   //int mouse_m;
-   int16_t mouse_x[8];
-   int16_t mouse_y[8];
+   static int mbL = 0, mbR = 0, mbM = 0;
+   int mouse_l;
+   int mouse_r;
+   int mouse_m;
+   int16_t mouse_x;
+   int16_t mouse_y;
 
    if (mouse_enable == 0 || mouse_enable == 2)
       return;
 	
-   for(i = 0;i < 8; i++)
-   {
-   	mouse_x[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
-   	mouse_y[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
-   	//mouse_l[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
-   	//mouse_r[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
-   	//mouse_m[i] = input_state_cb(i, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE);
+   //for(i = 0;i < 8; i++)
+   //{
+   	mouse_x = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
+   	mouse_y = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
+   	mouse_l = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_LEFT);
+   	mouse_r = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_RIGHT);
+   	mouse_m = input_state_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_MIDDLE);
 
-   	mouseLX[i] = mouse_x[i]*INPUT_RELATIVE_PER_PIXEL;;
-   	mouseLY[i] = mouse_y[i]*INPUT_RELATIVE_PER_PIXEL;;
+   	mouseLX = mouse_x*INPUT_RELATIVE_PER_PIXEL;;
+   	mouseLY = mouse_y*INPUT_RELATIVE_PER_PIXEL;;
 	
-	//Is it necessary to explicitly map the mouse buttons?
-	//They can be mapped for each player in the Libretro menu.
-   	//if(mbL==0 && mouse_l)
-   	//{
-      	//  mbL=1;
-      	//  mouseBUT[0]=0x80;
-   	//}
-   	//else if(mbL==1 && !mouse_l)
-   	//{
-        //  mouseBUT[0]=0;
-        //  mbL=0;
-   	//}
-	//
-   	//if(mbR==0 && mouse_r)
-   	//{
-        //  mbR=1;
-      	//  mouseBUT[1]=0x80;
-   	//}
-   	//else if(mbR==1 && !mouse_r)
-   	//{
-        //  mouseBUT[1]=0;
-        //  mbR=0;
-   	//}
-	//
-   	//if(mbM==0 && mouse_m)
-   	//{
-        //  mbM=1;
-        //  mouseBUT[2]=0x80;
-   	//}
-   	//else if(mbM==1 && !mouse_m)
-   	//{
-        //  mouseBUT[2]=0;
-        //  mbM=0;
-   	//}
-   }
+   	if(mbL==0 && mouse_l)
+   	{
+      	  mbL=1;
+      	  mouseBUT[0]=0x80;
+   	}
+   	else if(mbL==1 && !mouse_l)
+   	{
+          mouseBUT[0]=0;
+          mbL=0;
+   	}
+	
+   	if(mbR==0 && mouse_r)
+   	{
+          mbR=1;
+      	  mouseBUT[1]=0x80;
+   	}
+   	else if(mbR==1 && !mouse_r)
+   	{
+          mouseBUT[1]=0;
+          mbR=0;
+   	}
+	
+   	if(mbM==0 && mouse_m)
+   	{
+          mbM=1;
+          mouseBUT[2]=0x80;
+   	}
+   	else if(mbM==1 && !mouse_m)
+   	{
+          mouseBUT[2]=0;
+          mbM=0;
+   	}
+   //}
 }
 
 void process_lightgun_state(void)
 {
-   unsigned i;
+   //unsigned i;
 	
-   int16_t gun_x[4];
-   int16_t gun_y[4];
+   int16_t gun_x;
+   int16_t gun_y;
 
    if (mouse_enable == 0 || mouse_enable == 1)
       return;
 	
-   for(i = 0;i < 4; i++)
-   {
-   	gun_x[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
-   	gun_y[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
+   //for(i = 0;i < 4; i++)
+   //{
+   	gun_x = input_state_cb(0, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
+   	gun_y = input_state_cb(0, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
 
-   	gunLX[i] = gun_x[i]*2;;
-   	gunLY[i] = gun_y[i]*2;;
+   	gunLX = gun_x*2;;
+   	gunLY = gun_y*2;;
 	   
-        if (input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN) || input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD))
+        if (input_state_cb(0, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN) || input_state_cb(0, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD))
 	{
 	//      //top left
-	      gunLX[i] = -65534;
-	      gunLY[i] = -65534;
+	      gunLX = -65534;
+	      gunLY = -65534;
         }
-   }
+   //}
 }
 
 static void initInput(running_machine &machine)
@@ -976,14 +974,14 @@ static void initInput(running_machine &machine)
 
    if (mouse_enable == 1)
    {
-      for(i = 0;i < 8; i++)
-      {
+      //for(i = 0;i < 8; i++)
+      //{
       	//MOUSE
-	sprintf(defname, "Mouse%d", i);
-      	mouse_device[i] = machine.input().device_class(DEVICE_CLASS_MOUSE).add_device(defname);
+	//sprintf(defname, "Mouse%d", i);
+      	mouse_device = machine.input().device_class(DEVICE_CLASS_MOUSE).add_device("Mouse1");
       	// add the axes
-      	input_device_item_add_mouse(i , "X", &mouseLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
-      	input_device_item_add_mouse(i , "Y", &mouseLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
+      	input_device_item_add_mouse(mouse_device , "X", &mouseLX, ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_mouse(mouse_device , "Y", &mouseLY, ITEM_ID_YAXIS, generic_axis_get_state);
       	// add the buttons
 	// See above. Is this necessary to include due to Libretro handling inputs on its own?
       	//for (button = 0; button < 4; button++)
@@ -992,20 +990,19 @@ static void initInput(running_machine &machine)
         //   sprintf(defname, "B%d", button + 1);
         //   input_device_item_add_mouse(mouse_device, defname, &mouseBUT[button], itemid, generic_button_get_state);
       	//}
-      }
+      //}
    }
 	   
    if (mouse_enable == 2)
    {
-      for(i = 0;i < 4; i++)
-      {
+      //for(i = 0;i < 4; i++)
+      //{
       	//LIGHTGUN
-	sprintf(defname, "Gun%d", i);
-      	lightgun_device[i] = machine.input().device_class(DEVICE_CLASS_LIGHTGUN).add_device(defname);
+      	lightgun_device = machine.input().device_class(DEVICE_CLASS_LIGHTGUN).add_device("Gun1");
       	// add the axes
-      	input_device_item_add_lightgun(i , "X", &gunLX[i], ITEM_ID_XAXIS, generic_axis_get_state);
-      	input_device_item_add_lightgun(i , "Y", &gunLY[i], ITEM_ID_YAXIS, generic_axis_get_state);
-      }
+      	input_device_item_add_lightgun(lightgun_device , "X", &gunLX, ITEM_ID_XAXIS, generic_axis_get_state);
+      	input_device_item_add_lightgun(lightgun_device , "Y", &gunLY, ITEM_ID_YAXIS, generic_axis_get_state);
+      //}
    }
 
    //KEYBOARD
