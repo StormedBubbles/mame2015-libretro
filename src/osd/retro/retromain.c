@@ -45,8 +45,8 @@ render_target *our_target = NULL;
 
 /* input device */
 static input_device *retrokbd_device;    // KEYBD
-static input_device *mouse_device[8];    // MOUSE0/MOUSE1/.../MOUSE7
-static input_device *lightgun_device[4]; // GUN0/GUN1/GUN2/GUN3
+static input_device *mouse_device;    // MOUSE0/MOUSE1/.../MOUSE7
+static input_device *lightgun_device; // GUN0/GUN1/GUN2/GUN3
 static input_device *joy_device[8];      // JOY0/JOY1/.../JOY7
 static input_device *Pad_device[8];      // PAD0/PAD1/.../PAD7
 
