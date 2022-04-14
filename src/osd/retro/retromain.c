@@ -47,8 +47,8 @@ render_target *our_target = NULL;
 static input_device *retrokbd_device;    // KEYBD
 static input_device *mouse_device;    // MOUSE0/MOUSE1/.../MOUSE7
 static input_device *lightgun_device; // GUN0/GUN1/GUN2/GUN3
-static input_device *joy_device[8];      // JOY0/JOY1/.../JOY7
-static input_device *Pad_device[8];      // PAD0/PAD1/.../PAD7
+static input_device *joy_device[4];      // JOY0/JOY1/.../JOY7
+static input_device *Pad_device[4];      // PAD0/PAD1/.../PAD7
 
 /* state */
 UINT16 retrokbd_state[RETROK_LAST];
@@ -57,7 +57,7 @@ int mouseLY;
 int mouseBUT[4];
 int gunLX;
 int gunLY;
-static Joystate joystate[8];
+static Joystate joystate[4];
 
 int ui_ipt_pushchar=-1;
 
@@ -867,7 +867,7 @@ void process_joypad_state(void)
 {
    unsigned i, j;
 
-   for(j = 0;j < 8; j++)
+   for(j = 0;j < 4; j++)
    {
       for(i = 0;i < MAX_BUTTONS; i++)
          joystate[j].button[i] = input_state_cb(j, RETRO_DEVICE_JOYPAD, 0,i)?0x80:0;
@@ -1027,7 +1027,7 @@ static void initInput(running_machine &machine)
 
    Input_Binding(machine);
 
-   for(i=0;i<8;i++)
+   for(i=0;i<4;i++)
    {
       sprintf(defname, "Joy%d", i);
       joy_device[i]=machine.input().device_class(DEVICE_CLASS_JOYSTICK).add_device(defname);
