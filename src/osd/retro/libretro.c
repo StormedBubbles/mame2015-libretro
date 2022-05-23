@@ -41,6 +41,7 @@ char RPATH[512];
 int serialize_size = 0; // memorize size of serialized savestate
 
 static char option_mouse[50];
+static char option_reload[50];
 static char option_cheats[50];
 static char option_nag[50];
 static char option_info[50];
@@ -136,6 +137,7 @@ void retro_set_audio_sample(retro_audio_sample_t cb) { }
 void retro_set_environment(retro_environment_t cb)
 {
    sprintf(option_mouse, "%s_%s", core, "mouse_mode");
+   sprintf(option_reload, "%s_%s", core, "reload_mode");
    sprintf(option_cheats, "%s_%s", core, "cheats_enable");
    sprintf(option_nag, "%s_%s",core,"hide_nagscreen");
    sprintf(option_info, "%s_%s",core,"hide_infoscreen");
@@ -152,7 +154,7 @@ void retro_set_environment(retro_environment_t cb)
    sprintf(option_auto_save,"%s_%s",core,"auto_save");
    sprintf(option_saves,"%s_%s",core,"saves");
    sprintf(option_throttle,"%s_%s",core,"throttle");
-  sprintf(option_nobuffer,"%s_%s",core,"nobuffer");
+   sprintf(option_nobuffer,"%s_%s",core,"nobuffer");
 
    static const struct retro_variable vars[] = {
     /* some ifdefs are redundant but I wanted 
@@ -171,6 +173,7 @@ void retro_set_environment(retro_environment_t cb)
     /* common for MAME/MESS/UME */
     { option_auto_save, "Auto save/load states; disabled|enabled" },
     { option_mouse, "XY device (Restart); none|lightgun|mouse" },
+    { option_reload, "Lightgun offscreen position; free|fixed (top left)|fixed (bottom right)" },
     { option_throttle, "Enable throttle; disabled|enabled" },
     { option_cheats, "Enable cheats; disabled|enabled" },
 //  { option_nobuffer, "Nobuffer patch; disabled|enabled" },
@@ -231,6 +234,19 @@ static void check_variables(void)
          mouse_mode = 1;
       if (!strcmp(var.value, "lightgun"))
          mouse_mode = 2;
+   }
+
+   var.key   = option_reload;
+   var.value = NULL;
+	
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      if (!strcmp(var.value, "free"))
+         reload_mode = 0;
+      if (!strcmp(var.value, "fixed (top left)"))
+         reload_mode = 1;
+      if (!strcmp(var.value, "fixed (bottom right)"))
+         reload_mode = 2;
    }
 
    var.key   = option_throttle;
