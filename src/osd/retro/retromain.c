@@ -993,23 +993,23 @@ void process_lightgun_state(void)
       lightgun_x[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
       lightgun_y[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
 
-      //Lower half of the X range is squished into left 10% of screen
-      //Scale the original factor of 2 by 5 (reduce 50% to 10%) to get 0.4
-      //Then, divide by the crosshair factor of 0.8875 to get 0.4507
-      //For the other half, scale it to 90% of the screen (2 * 9/5 = 3.6), and then divide by 0.8875 to get 4.0563
+      //Lower half of the X range is squished into left 10% (32/320) of screen
+      //Scale the original factor of 2 by 5 (increase 10% to 50%) to get 10
+      //Then, divide by the crosshair factor of 284/320 to get 11.2676
+      //For the other half of the coordinates, decrease 90% to 50% (2 * 5/9 = 1.1111), and then divide by 284/320 to get 1.252
       if(lightgun_x[i] <= 0)
-         lightgunLX[i] = lightgun_x[i]*0.4507;
+         lightgunLX[i] = lightgun_x[i]*11.2676;
       else
-         lightgunLX[i] = lightgun_x[i]*4.0563;
+         lightgunLX[i] = lightgun_x[i]*1.252;
 
-      //Lower half of the Y range is squished into top 10.7% of screen
-      //Scale the original factor of 2 by 4.6667 to get 0.4286
-      //Then, divide by the crosshair factor of 0.8393 to get 0.5106
-      //For the other half, scale it to 89.285% of the screen (2 * 8.9285/5 = 3.5714), and then divide by 0.8393 to get 4.2553
+      //Lower half of the Y range is squished into top 10.7% (24/224) of screen
+      //Scale the original factor of 2 by 4.6667 (increase 10.7% to 50%) to get 9.3333
+      //Then, divide by the crosshair factor of 188/224 to get 11.1206
+      //For the other half of the coordinates, decrease 89.286% to 50% (2 * 5/8.9286 = 1.12), and then divide by 0.8393 to get 1.3345
       if(lightgun_y[i] <= 0)
-         lightgunLY[i] = lightgun_y[i]*0.5106;
+         lightgunLY[i] = lightgun_y[i]*11.1206;
       else
-         lightgunLY[i] = lightgun_y[i]*4.2553;
+         lightgunLY[i] = lightgun_y[i]*1.3345;
 	 
       //Place the cursor at screen top left when detected as offscreen or when Gun Reload input activated
       //if (input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN ) || input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD ) )
