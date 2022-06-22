@@ -992,16 +992,31 @@ void process_lightgun_state(void)
 
       lightgun_x[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
       lightgun_y[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
-	
-      lightgunLX[i] = lightgun_x[i]*2;;
-      lightgunLY[i] = lightgun_y[i]*2;;
+
+      //Lower half of the X range is squished into left 10% of screen
+      //Scale the original factor of 2 by 5 (reduce 50% to 10%) to get 0.4
+      //Then, divide by the crosshair factor of 0.8875 to get 0.4507
+      //For the other half, scale it to 90% of the screen (2 * 9/5 = 3.6), and then divide by 0.8875 to get 4.0563
+      if(lightgun_x[i] <= 0)
+         lightgunLX[i] = lightgun_x[i]*0.4507;
+      else
+         lightgunLX[i] = lightgun_x[i]*4.0563;
+
+      //Lower half of the Y range is squished into top 10.7% of screen
+      //Scale the original factor of 2 by 4.6667 to get 0.4286
+      //Then, divide by the crosshair factor of 0.8393 to get 0.5106
+      //For the other half, scale it to 89.285% of the screen (2 * 8.9285/5 = 3.5714), and then divide by 0.8393 to get 4.2553
+      if(lightgun_y[i] <= 0)
+         lightgunLY[i] = lightgun_y[i]*0.5106;
+      else
+         lightgunLY[i] = lightgun_y[i]*4.2553;
 	 
       //Place the cursor at screen top left when detected as offscreen or when Gun Reload input activated
-      if (input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN ) || input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD ) )
-	  {
-	     lightgunLX[i] = -65534;
-	     lightgunLY[i] = -65534; 
-	  }
+      //if (input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN ) || input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD ) )
+	//  {
+	//     lightgunLX[i] = -65534;
+	//     lightgunLY[i] = -65534; 
+	//  }
 
    }
 }
