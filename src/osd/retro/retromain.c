@@ -999,7 +999,7 @@ void process_lightgun_state(void)
       //For the other half of the coordinates, decrease 90% to 50% (2 * 5/9 = 1.1111), and then divide by 284/320 to get 1.252
       //Additional offset of 580 pixels in 1400x1050 view accounted for by (580/1400) * 32767 * ratio
       if(lightgun_x[i] <= 0)
-         lightgunLX[i] = lightgun_x[i]*11.2676;
+         lightgunLX[i] = lightgun_x[i]*11.2676*5.6;
       else
          lightgunLX[i] = lightgun_x[i]*1.252 + 33050;
 
@@ -1009,7 +1009,7 @@ void process_lightgun_state(void)
       //For the other half of the coordinates, decrease 89.286% to 50% (2 * 5/8.9286 = 1.12), and then divide by 0.8393 to get 1.3345
       //Additional offset of 434 pixels in 1400x1050 view accounted for by (434/1050) * 32767 * ratio
       if(lightgun_y[i] <= 0)
-         lightgunLY[i] = lightgun_y[i]*11.1206;
+         lightgunLY[i] = lightgun_y[i]*11.1206*5.198;
       else
          lightgunLY[i] = lightgun_y[i]*1.3345 + 35982;
 	 
