@@ -993,25 +993,28 @@ void process_lightgun_state(void)
       lightgun_x[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
       lightgun_y[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
 
+      lightgunLX[i] = lightgun_x[i]*2.25;
+      lightgunLY[i] = lightgun_y[i]*2.38;
+
       //Lower half of the X range is squished into left 10% (32/320) of screen
       //Scale the original factor of 2 by 5 (increase 10% to 50%) to get 10
       //Then, divide by the crosshair factor of 284/320 to get 11.2676
       //For the other half of the coordinates, decrease 90% to 50% (2 * 5/9 = 1.1111), and then divide by 284/320 to get 1.252
       //Additional offset of 580 pixels in 1400x1050 view accounted for by (580/1400) * 32767 * ratio
-      if(lightgun_x[i] <= 0)
-         lightgunLX[i] = lightgun_x[i]*11.2676*5.6;
-      else
-         lightgunLX[i] = lightgun_x[i]*1.252 + 33050;
+      //if(lightgun_x[i] <= 0)
+      //   lightgunLX[i] = lightgun_x[i]*11.2676*5.6;
+      //else
+      //   lightgunLX[i] = lightgun_x[i]*1.252 + 33050;
 
       //Lower half of the Y range is squished into top 10.7% (24/224) of screen
       //Scale the original factor of 2 by 4.6667 (increase 10.7% to 50%) to get 9.3333
       //Then, divide by the crosshair factor of 188/224 to get 11.1206
       //For the other half of the coordinates, decrease 89.286% to 50% (2 * 5/8.9286 = 1.12), and then divide by 0.8393 to get 1.3345
       //Additional offset of 434 pixels in 1400x1050 view accounted for by (434/1050) * 32767 * ratio
-      if(lightgun_y[i] <= 0)
-         lightgunLY[i] = lightgun_y[i]*11.1206*5.198;
-      else
-         lightgunLY[i] = lightgun_y[i]*1.3345 + 35982;
+      //if(lightgun_y[i] <= 0)
+      //   lightgunLY[i] = lightgun_y[i]*11.1206*5.198;
+      //else
+      //   lightgunLY[i] = lightgun_y[i]*1.3345 + 35982;
 	 
       //Place the cursor at screen top left when detected as offscreen or when Gun Reload input activated
       //if (input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN ) || input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD ) )
