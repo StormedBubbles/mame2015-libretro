@@ -993,8 +993,8 @@ void process_lightgun_state(void)
       lightgun_x[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X);
       lightgun_y[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
 
-      lightgunLX[i] = lightgun_x[i]*2.25;
-      lightgunLY[i] = lightgun_y[i]*2.38;
+      lightgunLX[i] = lightgun_x[i]*2.25 + 7908;
+      lightgunLY[i] = lightgun_y[i]*2.38 + 14563;
 
       //Lower half of the X range is squished into left 10% (32/320) of screen
       //Scale the original factor of 2 by 5 (increase 10% to 50%) to get 10
