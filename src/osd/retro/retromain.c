@@ -994,16 +994,16 @@ void process_lightgun_state(void)
       lightgun_y[i] = input_state_cb(i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y);
 
 
-      lightgunLX[0] = (lightgun_x[0]*2.25) * 2.1 - 172085;
-      lightgunLY[0] = (lightgun_y[0]*2.38) * 2.13 - 192252;
+      lightgunLX[0] = (lightgun_x[0]*2.25) * 2.1 - 72771;
+      lightgunLY[0] = (lightgun_y[0]*2.38) * 2.13 - 75573;
 
       lightgunLX[1] = (lightgun_x[1]*2.25) * 2.1 + 211314;
-      lightgunLY[1] = (lightgun_y[1]*2.38) * 2.13 - 192252;
+      lightgunLY[1] = (lightgun_y[1]*2.38) * 2.13 - 75573;
 
       //lightgunLX[0] = (lightgun_x[0]*2.25 + 7908) * 2.3649 - 101978;
       //lightgunLY[0] = (lightgun_y[0]*2.38 + 14563) * 2.5424 - 164801;
 
-      //lightgunLX[1] = (lightgun_x[1]*2.25 + 7908) * 2.3649 + 125225;
+      //lightgunLX[1] = (lightgun_x[1]*2.25 + 7908) * 2.3649 + 89394;
       //lightgunLY[1] = (lightgun_y[1]*2.38 + 14563) * 2.5424 - 164801;
 	 
       //Place the cursor at screen top left when detected as offscreen or when Gun Reload input activated
