@@ -1024,18 +1024,32 @@ void process_lightgun_state(void)
       lightgunLX[i] = lightgun_x[i]*2;
       lightgunLY[i] = lightgun_y[i]*2;
 
-      if (lightgun_hack == 1)
+      if (lightgun_hack == 1) //blueshrk
       {
          lightgunLX[i] = lightgun_x[i]*2.131;
 	 lightgunLY[i] = lightgun_y[i]*2;
       }
 
-      if (lightgun_hack == 2)
+      if (lightgun_hack == 2) //ppsatan
       {
          lightgunLX[0] = (lightgun_x[0]*2.25) * 2.1 - 72771;
 	 lightgunLY[0] = (lightgun_y[0]*2.38) * 2.13 - 75573;
          lightgunLX[1] = (lightgun_x[1]*2.25) * 2.1 + 89394;
 	 lightgunLY[1] = (lightgun_y[1]*2.38) * 2.13 - 75573;
+      }
+
+      if (lightgun_hack == 3) //playch10 (pc_duckh/pc_hgaly/pc_wgnmn)
+	      		      //GUNCODE_1 = single screen
+	      		      //GUNCODE_2 = stacked
+	      		      //GUNCODE_3 = side by side
+	      		      //Use lightgun device in port 1 for all cases. Just change rom.cfg to corresponding GUNCODE
+      {
+         lightgunLX[0] = lightgun_x[0]*2;
+	 lightgunLY[0] = lightgun_y[0]*2;
+         lightgunLX[1] = lightgun_x[0]*2;
+	 lightgunLY[1] = lightgun_y[0]*4 - 65534;
+         lightgunLX[2] = lightgun_x[0]*4 - 65534;
+	 lightgunLY[2] = lightgun_y[0]*2;
       }
 
       //Place the cursor at a corner of the screen designated by "Lightgun offscreen position" when the cursor touches a min/max value
@@ -1215,6 +1229,11 @@ static void Input_Binding(running_machine &machine)
    lightgun_hack = 1;
    else if ( (core_stricmp(machine.system().name, "ppsatan") == 0) || (core_stricmp(machine.system().parent, "ppsatan") == 0) )
    lightgun_hack = 2;
+   else if ( (core_stricmp(machine.system().name, "pc_duckh") == 0) || (core_stricmp(machine.system().parent, "pc_duckh") == 0) 
+	     || (core_stricmp(machine.system().name, "pc_hgaly") == 0) || (core_stricmp(machine.system().parent, "pc_hgaly") == 0)
+	     || (core_stricmp(machine.system().name, "pc_wgnmn") == 0) || (core_stricmp(machine.system().parent, "pc_wgnmn") == 0)
+	   )
+   lightgun_hack = 3;
    else
    lightgun_hack = 0;
 
