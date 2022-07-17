@@ -1052,6 +1052,12 @@ void process_lightgun_state(void)
 	 lightgunLY[2] = lightgun_y[0]*2;
       }
 
+      if (lightgun_hack == 4) //borntofi
+      {
+         lightgunLX[i] = lightgun_x[i]*2;
+	 lightgunLY[i] = lightgun_y[i]*2.0706 - 1414;
+      }
+
       //Place the cursor at a corner of the screen designated by "Lightgun offscreen position" when the cursor touches a min/max value
       if (input_state_cb( i, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN ))
       {
@@ -1234,6 +1240,8 @@ static void Input_Binding(running_machine &machine)
 	     || (core_stricmp(machine.system().name, "pc_wgnmn") == 0) || (core_stricmp(machine.system().parent, "pc_wgnmn") == 0)
 	   )
    lightgun_hack = 3;
+   else if ( (core_stricmp(machine.system().name, "borntofi") == 0) || (core_stricmp(machine.system().parent, "borntofi") == 0) )
+   lightgun_hack = 4;
    else
    lightgun_hack = 0;
 
