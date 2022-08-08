@@ -1063,6 +1063,11 @@ void process_lightgun_state(void)
          lightgun_x_s[i] = lightgun_x[i]*2.0317 - 1046;
 	 lightgun_y_s[i] = lightgun_y[i]*2;
       }
+      else if (lightgun_hack == 6) //gdfs
+      {
+         lightgun_x_s[i] = lightgun_x[i]*1.3429 - 11366;
+	 lightgun_y_s[i] = lightgun_y[i]*2 + 21845;
+      }
       else
       {
          lightgun_x_s[i] = lightgun_x[i]*2;
@@ -1277,6 +1282,8 @@ static void Input_Binding(running_machine &machine)
    lightgun_hack = 4;
    else if ( (core_stricmp(machine.system().name, "claybust") == 0) || (core_stricmp(machine.system().parent, "claybust") == 0) )
    lightgun_hack = 5;
+   else if ( (core_stricmp(machine.system().name, "gdfs") == 0) || (core_stricmp(machine.system().parent, "gdfs") == 0) )
+   lightgun_hack = 6;
    else
    lightgun_hack = 0;
 
