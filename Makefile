@@ -85,7 +85,7 @@ endif
 #-------------------------------------------------
 
 # start with empties for everything
-CCOMFLAGS = -DDISABLE_MIDI -fno-delete-null-pointer-checks
+CCOMFLAGS = -DDISABLE_MIDI -fno-delete-null-pointer-checks -fsigned-char
 CONLYFLAGS = -fpermissive -fno-stack-protector
 CONLYFLAGS += $(CORE_DEFINE)
 COBJFLAGS =
